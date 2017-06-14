@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<project name="stream-client" default="sample" basedir=".">
+
+	<property name="javac.target" value="1.6"/>
+	<property name="build.out.dir" value="./out"/>
+	<property name="build.lib.dir" value="./lib"/>
+	<property name="build.src.dir" value="./src"/>
+	<property name="build.sample.dir" value="./sample"/>
+
+	<path id="build.classpath.path.id">
+		<path>
+			<fileset dir="${build.lib.dir}">
+				<include name="*.java"/>
+			</fileset>
+		</path>
+		<path>
+			<fileset dir="${build.src.dir}">
+				<include name="*.java"/>
+			</fileset>
+		</path>
+    </path>
+
+	<property name="build.classpath" refid="build.classpath.path.id"/>
+	<property name="build.jarfile" value="${build.out.dir}/attask-stream-client.jar"/>
+
+	<target name="build">
+		<mkdir dir="${build.out.dir}/build"/>
+
+		<javac debug="on" optimize="on"
+			encoding="cp1252"
+			destdir="${build.out.dir}/build"
+			classpath="${build.classpath}"
+			deprecation="off"
+			includes="**"
+			fork="true" memoryMaximumSize="1024m"
+			target="${javac.target}">
+			<src path="${build.lib.dir}"/>
+			<src path="${build.src.dir}"/>
+		</javac>
+		
+		<jar destfile="${build.jarfile}">
+			<fileset dir="${build.out.dir}/build">
+				<include name="com/attask/api/*.class"/>
+				<include name="org/json/*.class"/>
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.out.dir}"/>
+	</target>
+
+	<target name="sample" depends="build">
+		<mkdir dir="${build.out.dir}/sample"/>
+
+		<javac debug="on" optimize="on"
+			encoding="cp1252"
+			destdir="${build.out.dir}/sample"
+			classpath="${build.jarfile}"
+			deprecation="off"
+			includes="**"
+			fork="true" memoryMaximumSize="1024m"
+			target="${javac.target}">
+			<src path="${build.sample.dir}"/>
+		</javac>
+
+		<java classpath="${build.jarfile};${build.out.dir}/sample" classname="com.attask.api.StreamClientSample"/>
+	</target>
+
+</project>
